@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>プログラミング学習記録</title>
+<script src="js/jquery-2.1.3.min.js"></script>
+<link rel="stylesheet" href="css/sample.css">
+</head>
+<body>
+
+<header>
+    <h1 id="header_title">
+        世界を変えるGEEKになるための<br>
+        プログラミング学習記録
+    </h1>
+</header>
+
+<main>
+<div id="main_add">
+<div id="today">   
+　<h1 id="main_title">本日の学習記録</h1>
+　<div id="today_training">
+    <table border="1">
+        <tr>
+            <th width="30">日付</th>
+            <th width="120">時間(h)</th>
+        </tr>
+        <tr>
+            <th>
+                <input type="date" min="2020-08-01" max="2021-3-31" id="date">
+            </th>
+            <th>
+                <select name="時間" id="time">
+                </select>
+            </th>
+        </tr>
+    </table>
+    <a href="#main_title2" id="record">追加</a>
+　</div>
+</div>
+<div id="past">
+    <h1 id="main_title2">過去の学習記録</h1>
+    <a href="#list" id="edit">記録を取消</a>
+    <a href="#list" id="clear">記録をクリア</a>
+    <table border="1" id="list">
+        <tr>
+            <th>日付</th>
+            <th>時間(h)</th>
+        </tr>
+    </table>
+</div>
+</div>
+    <h1 id="sum">
+        累計の勉強時間は、<span id="total"></span>時間です。
+    </h1>
+
+<script>
+let t ="";
+for(let i=0;i<=24;i++){
+    t += '<option value = "'+i+'">'+i+'</option>';
+}
+$("#time").html(t)
+
+//.データの記録
+function record(){
+    const date = $("#date").val();
+    const time = $("#time").val();
+    localStorage.setItem(date,time);
+    const html = '<tr><th>'+date+'</th><td>'+time+'</td></th>';
+    $("#list").append(html)
+}
+//.データ1つ取り消し
+let number = 'localStorage.length';
+function edit(){
+    const date = localStorage.key(number)
+    localStorage.removeItem(date);
+}
+//.データクリア
+function clear(){
+    localStorage.clear();
+    $("#list").empty();
+}
+$("#record").on("click",record);
+$("#edit").on("click",edit);
+$("#clear").on("click",clear);
+
+//.ページ読み込み：保存データ取得表示
+for(let i=0; i<localStorage.length; i++){
+    const date = localStorage.key(i);
+    const time = localStorage.getItem(date);
+    const html = '<tr><th>'+date+'</th><td>'+time+'</td></th>';
+    $("#list").append(html);
+}
+
+//.勉強時間の累計
+for(let i=0; i<localStorage.length; i++){
+    const date = localStorage.key(i);
+    const time = localStorage.getItem(date);
+    const total = time
+    $("#total").html(total);
+}
+
+// 合計値を求める
+function sum(){
+    // 表の金額を取得する(tdの奇数列を取得)
+    let timelist = $("table td").map(function(val){
+        let learningtime = parseInt($(val).text());
+        if(learningtime >= 0) {
+            return learningtime;
+        } else {
+            return null;
+        }
+    });
+    // 価格の合計を求める
+    let total = 0;
+    timelist.each(function(val){
+      total = total + val;
+    });
+    $("#total").html(total);
+  }
+
+</script>
+<footer><small>G's Academy</small></footer>
+</body>
+</html>
